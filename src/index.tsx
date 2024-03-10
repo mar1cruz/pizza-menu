@@ -66,16 +66,31 @@ function Header() {
 }
 
 function Menu() {
+    const pizzas = pizzaData
+    const numPizzas = pizzas.length
+
     return (
         <main className='menu'>
             <h2>Our Menu</h2>
-            <ul className='pizzas'>
-                {pizzaData.map(pizza => {
-                    return (
-                        <Pizza key={pizza.name} pizza={pizza}/>
-                    )
-                })}
-            </ul>
+
+
+            {numPizzas > 0 ?
+                <>
+                    <p>Authentic Italian cuisine. 6 creative dishes to choose from. All from our stone even, all
+                        organic, all delicious.</p>
+
+                    <ul className='pizzas'>
+                        {pizzas.map(pizza => {
+                            return (
+                                <Pizza key={pizza.name} pizza={pizza}/>
+                            )
+                        })}
+                    </ul>
+                </>
+
+                : <p>We're still working on our menu. Please come back later :)</p>}
+
+
         </main>
     )
 }
@@ -87,17 +102,21 @@ type PizzaPropsType = {
         ingredients: string
         photoName: string
         price: number
+        soldOut: boolean
     }
 }
 
 function Pizza({pizza}: PizzaPropsType) {
+
+    // if (pizza.soldOut) return null
+
     return (
-        <li className='pizza'>
+        <li className={`pizza ${pizza.soldOut ? 'sold-out' : ''}`}>
             <img src={pizza.photoName} alt={pizza.name}/>
             <div>
                 <h3>{pizza.name}</h3>
                 <p>{pizza.ingredients}</p>
-                <span>{pizza.price}</span>
+                <span>{pizza.soldOut ? 'SOLD OUT' : pizza.price}</span>
             </div>
         </li>
     )
@@ -109,10 +128,29 @@ function Footer() {
     const closeHour = 22
     const isOpen = hour >= openHour && hour <= closeHour
 
-    // if (hour >= openHour && hour <= closeHour) alert("We're currently open!")
-    // else alert("We're currently close!")
+    return (
+        <footer className='footer'>
 
-    return <footer className='footer'>{hour}We're currently open!</footer>
+            {isOpen ?
+                <Order closeHour={closeHour} openHour={openHour}/>
+                : <p>We're happy to welcome you between {openHour}:00 and {closeHour}:00.</p>
+            }
+        </footer>
+    )
+}
+
+type OderPropsType = {
+    closeHour: number
+    openHour: number
+}
+
+function Order({closeHour, openHour}: OderPropsType) {
+    return (
+        <div className='order'>
+            <p>We're open from {openHour}:00 to {closeHour}:00. Come visit us or order online</p>
+            <button className='btn'>Order</button>
+        </div>
+    )
 }
 
 
